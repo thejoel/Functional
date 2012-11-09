@@ -1,0 +1,6 @@
+name:  functional
+description:  A sample application
+
+dependencies:
+   vector_math: any
+#  unittest: { sdk: unittest }
