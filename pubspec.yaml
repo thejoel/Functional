@@ -1,6 +1,8 @@
-name:  functional
-description:  A sample application
-
+name: functional
+description: A sample application
 dependencies:
-   vector_math: any
+  unittest: any
+  three: any
+  vector_math: any
+
 #  unittest: { sdk: unittest }

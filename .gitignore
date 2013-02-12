@@ -1,0 +1,5 @@
+thumbs.db
+packages
+pubspec.lock
+*.js
+*.map
