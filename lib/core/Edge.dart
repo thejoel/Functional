@@ -1,14 +1,13 @@
 part of functional;
 
 class Edge {
-  vec3 start, end;
-  Function driver;
+  num resolution;
+  Point start, end;
+  Function driver = ((Location loc) => loc.absolute);
   
-  Edge(this.start, this.end, [overdriver]) {
+  Edge(this.start, this.end, {Function overdriver, num this.resolution : 2 }) {
     if (?overdriver) {
       driver = overdriver;
-    } else {
-      driver = ((Location loc) => loc.absolute);
     }
   }
   
@@ -19,7 +18,10 @@ class Edge {
     return driver(new Location(relative, absolute));
   }
   
-  List<vec3> generatePoints([num res = 5]) {
+  List<vec3> generatePoints([num res]) {
+    if (!?res){
+      res = resolution;
+    }
     List<vec3> ret = [interpolate(0)];
     num step = 1 / (res-1);
     

@@ -15,6 +15,7 @@ class WebGL_Engine  {
   WebGLRenderer renderer;
   Func.Shape shape;
   var edges;
+  var mesh;
   var particles;
 
   void run() {
@@ -41,6 +42,8 @@ class WebGL_Engine  {
     scene.add( light );
     
     particleMaterial = new ParticleBasicMaterial( color: 0x000000, size: 8, opacity: .75 );
+    var material = new MeshLambertMaterial( color: 0xBBB );
+    var material2 = new MeshBasicMaterial( color: 0x000000, wireframe: true, transparent: true );
 
     var geometry = new Shape();
     var points = new Geometry();
@@ -59,13 +62,15 @@ class WebGL_Engine  {
         geometry.lineTo(ed.end.x, ed.end.y);
       });
       
-      var material = new MeshLambertMaterial( color: 0xBBB );
-      var material2 = new MeshBasicMaterial( color: 0x000000, wireframe: true, transparent: true );
       
       edges = new Line( geometry.createPointsGeometry(), material2 );
       //cube = SceneUtils.createMultiMaterialObject( geometry, [ material, material2]);
       scene.add( edges );
     }
+    
+    
+    mesh = new Mesh(points, material);
+    scene.add( mesh );
     
     //Particle particle = new Particle( particleMaterial );
     particles = new ParticleSystem( points, particleMaterial );
@@ -97,8 +102,12 @@ class WebGL_Engine  {
       edges.rotation.x += 0.003;
       edges.rotation.y += 0.01;
     }
+    
     particles.rotation.x += 0.003;
     particles.rotation.y += 0.01; 
+    
+    mesh.rotation.x += 0.003;
+    mesh.rotation.y += 0.01; 
 
     renderer.render( scene, camera );
 
@@ -107,27 +116,22 @@ class WebGL_Engine  {
 }
 
 void main() {
-  var origin = new Func.Point();
-  var rect = new Func.Rectangle();
-  
-  var zeroX = new Func.ConstraintAttach1D(rect.start, origin.P[0], new vec3(1.0, 0.0, 0.0));
-  var zeroY = new Func.ConstraintAttach1D(rect.start, origin.P[0], new vec3(0.0, 1.0, 0.0));
-  
-  rect.width = 200.0;
-  rect.height = 200.0;
-  
-  zeroX.distance = 0.0;
-  zeroY.distance = 0.0;
-  
   var h = new Func.Shape();
-  h..addChild(rect);
+  h.P.add(new Func.Point(0.0, 0.0, 0.0));
+  h.P.add(new Func.Point(0.0, 1.0, 0.0));
+  h.P.add(new Func.Point(1.0, 1.0, 0.0));
+  h.P.add(new Func.Point(0.0, 0.0, -1.0));
   
-  print(h);
-  h.regen();
-  print(h);
+  h.E.add(new Func.Edge(h.P[0], h.P[1]));
+  h.E.add(new Func.Edge(h.P[1], h.P[2]));
+  h.E.add(new Func.Edge(h.P[2], h.P[0]));
+  
+  h.F.add(new Func.Face(h.E));
+  
+  var e = new Func.Extrude(h, new Func.Edge(h.P[0], h.P[3]));
   
   var eng = new WebGL_Engine();
   
-  eng.shape = h;
+  eng.shape = e;
   eng.run();
 }
